@@ -2,8 +2,8 @@
 online calculator: https://dustinchen26.github.io/bw
 
 ## Usage
+● Usage: Parse Qcom UeCapabilityInformation NR supported channelBWs
 ```
-● Usage: Parse Qcom UeCapabilityInformation supported channelBWs
 > ref: 3GPP spec ETSI TS 138 306
 > (Rule1) => For FR1, the bits in channelBWs-DL starting from the leftmost bit indicate 5, 10, 15, 20, 25, 30, 40, 50, 60 and 80MHz. ex: channelBWs-DL fr1 :{scs-30kHz '00010111 11'B},
 > (Rule2) => For FR1, the leading/leftmost bit in channelBWs-DL-v1590 indicates 70MHz, and all the remaining bits in channelBWs-DL-v1590 shall be set to 0. ex:{scs-30kHz '10000000 00000000'B},
