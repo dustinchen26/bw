@@ -1,0 +1,89 @@
+<!-- 
+  Copyright © [2023] [Dustin_Chen]. All rights reserved.
+  Author: Dustin Chen
+  Email:  Dustin_Chen@compal.com or chuhpsdustin@gmail.com
+-->  
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>channelBWs Parser</title>
+	
+    <style>
+
+        /* 調整每一行上下間距 */
+        p, h1, h3 {
+            margin: 0.4em 0;
+        }
+
+    </style>	
+
+    <script>
+        function parseText() {
+            const inputText = document.getElementById('inputText').value;
+            const pattern = /bandNR (\d+)[\s\S]*?(scs-15kHz '([01\s]+)')[\s\S]*?(scs-30kHz '([01\s]+)')[\s\S]*?(scs-60kHz '([01\s]+)')/g;
+
+            let outputText = '';
+            let match;
+
+            while ((match = pattern.exec(inputText)) !== null) {
+                const bandNR = match[1];
+                const scs15kHzAndBWs = match[2];
+                const channelBWsBits15kHz = match[3].replace(/\s/g, ''); // Remove whitespace
+                const scs30kHzAndBWs = match[4];
+                const channelBWsBits30kHz = match[5].replace(/\s/g, ''); // Remove whitespace
+                const scs60kHzAndBWs = match[6];
+                const channelBWsBits60kHz = match[7].replace(/\s/g, ''); // Remove whitespace
+
+                const channelBWs = [5, 10, 15, 20, 25, 30, 40, 50, 60, 80]; // in MHz
+
+                let supportedBWs15kHz = [];
+                for (let j = 0; j < channelBWsBits15kHz.length; j++) {
+                    if (channelBWsBits15kHz.charAt(j) === '1') {
+                        supportedBWs15kHz.push(channelBWs[j]);
+                    }
+                }
+
+                let supportedBWs30kHz = [];
+                for (let j = 0; j < channelBWsBits30kHz.length; j++) {
+                    if (channelBWsBits30kHz.charAt(j) === '1') {
+                        supportedBWs30kHz.push(channelBWs[j]);
+                    }
+                }
+
+                let supportedBWs60kHz = [];
+                for (let j = 0; j < channelBWsBits60kHz.length; j++) {
+                    if (channelBWsBits60kHz.charAt(j) === '1') {
+                        supportedBWs60kHz.push(channelBWs[j]);
+                    }
+                }
+
+                outputText += `bandNR: ${bandNR}, ${scs15kHzAndBWs} Supported Bandwidths (scs-15kHz): ${supportedBWs15kHz.join(', ')} MHz\n`;
+                outputText += `bandNR: ${bandNR}, ${scs30kHzAndBWs} Supported Bandwidths (scs-30kHz): ${supportedBWs30kHz.join(', ')} MHz\n`;
+                outputText += `bandNR: ${bandNR}, ${scs60kHzAndBWs} Supported Bandwidths (scs-60kHz): ${supportedBWs60kHz.join(', ')} MHz\n`;
+            }
+
+            if (outputText !== '') {
+                document.getElementById('output').innerText = outputText;
+            } else {
+                document.getElementById('output').innerText = 'Parsing failed. Make sure the input follows the specified format.';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>channelBWs Parser</h1>
+	<p style="margin: 0;">Author: Dustin_Chen, email: <a href="mailto:Dustin_Chen@compal.com" style="line-height: 1;">Dustin_Chen@compal.com</a> or <a href="mailto:chuhpsdustin@gmail.com" style="line-height: 1;">chuhpsdustin@gmail.com</a></p>	
+	<p><b> ● Usage: Parse Qcom UeCapabilityInformation supported channelBWs</b></p>
+	<p> > ref: 3GPP spec ETSI TS 138 306 </p>
+	<p> > (Rule1) => For FR1, the bits in channelBWs-DL starting from the leftmost bit indicate 5, 10, 15, 20, 25, 30, 40, 50, 60 and 80MHz. ex: channelBWs-DL fr1 :{scs-30kHz '00010111 11'B}, </p>
+	<p> > (Rule2) => For FR1, the leading/leftmost bit in channelBWs-DL-v1590 indicates 70MHz, and all the remaining bits in channelBWs-DL-v1590 shall be set to 0. ex:{scs-30kHz '10000000 00000000'B},</p>
+	<p> > (Rule3) => To determine whether the UE supports a channel bandwidth of 90 MHz, the network may ignore this capability for and validate instead the channelBW-90mhz and the supportedBandwidthCombinationSet. ex: channelBW-90mhz supported,</p>
+	<p> > (Rule4) => whether the UE supports a channel bandwidth of 100 MHz, ex: supportedBandwidthDL fr1 : mhz100</p>
+	<p> > ex: Compal UE mifi n78 SCS=30 support BW 20, 30, 40, 50, 60, 70, 80, 90, 100 </p>
+	<p><b> ● Paste the UeCapabilityInformation below(it only process Rule1, the Rule 2,3,4 should check by yourself)</b></p>
+    <textarea id="inputText" rows="10" cols="70" placeholder="Paste your text here"></textarea><br>
+    <button onclick="parseText()">Parse Text</button>
+    <pre id="output"></pre>
+</body>
+</html>
