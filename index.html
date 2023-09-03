@@ -7,7 +7,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>channelBWs Parser</title>
+    <title>NR SA channelBWs supported by Qcom UE parser</title>
 	
     <style>
 
@@ -16,6 +16,42 @@
             margin: 0.4em 0;
         }
 
+        .red-text {
+            color: red;
+        }
+
+        .limegreen-text {
+            color: limegreen;
+        }
+
+        .blue-text {
+            color: blue;
+        }
+
+        /* 設置整個<body>中文本的字體和字體大小 */
+        body {
+            font-family: Arial, sans-serif; /* 設置字體族列，備用字體 */
+            font-size: 15px; /* 設置字體大小 */
+        }
+		
+        /* 設置<pre>標籤內文本的字體大小 */
+        pre {
+            font-size: 13px; /* 設置字體大小為18圖元 */
+        }		
+
+        /* 定義CSS類來設置不同顏色 */
+        .red-text {
+            color: red;
+        }
+
+        .blue-text {
+            color: blue;
+        }
+
+        .limegreen-text {
+            color: limegreen;
+        }
+		
     </style>	
 
     <script>
@@ -60,7 +96,7 @@
 
                 outputText += `bandNR: ${bandNR}, ${scs15kHzAndBWs} Supported Bandwidths (scs-15kHz): ${supportedBWs15kHz.join(', ')} MHz\n`;
                 outputText += `bandNR: ${bandNR}, ${scs30kHzAndBWs} Supported Bandwidths (scs-30kHz): ${supportedBWs30kHz.join(', ')} MHz\n`;
-                outputText += `bandNR: ${bandNR}, ${scs60kHzAndBWs} Supported Bandwidths (scs-60kHz): ${supportedBWs60kHz.join(', ')} MHz\n`;
+                outputText += `bandNR: ${bandNR}, ${scs60kHzAndBWs} Supported Bandwidths (scs-60kHz): ${supportedBWs60kHz.join(', ')} MHz\n\n`;
             }
 
             if (outputText !== '') {
@@ -72,18 +108,231 @@
     </script>
 </head>
 <body>
-    <h1>channelBWs Parser</h1>
+    <h1>NR SA channelBWs supported by Qcom UE parser</h1>
 	<p style="margin: 0;">Author: Dustin_Chen, email: <a href="mailto:Dustin_Chen@compal.com" style="line-height: 1;">Dustin_Chen@compal.com</a> or <a href="mailto:chuhpsdustin@gmail.com" style="line-height: 1;">chuhpsdustin@gmail.com</a></p>	
-	<p><b> ● Usage: Parse Qcom UeCapabilityInformation NR supported channelBWs</b></p>
-	<p> > ref: 3GPP spec ETSI TS 138 306 </p>
-	<p> > (Rule1) => For FR1, the bits in channelBWs-DL starting from the leftmost bit indicate 5, 10, 15, 20, 25, 30, 40, 50, 60 and 80MHz. ex: channelBWs-DL fr1 :{scs-30kHz '00010111 11'B}, </p>
-	<p> > (Rule2) => For FR1, the leading/leftmost bit in channelBWs-DL-v1590 indicates 70MHz, and all the remaining bits in channelBWs-DL-v1590 shall be set to 0. ex:{scs-30kHz '10000000 00000000'B},</p>
-	<p> > (Rule3) => To determine whether the UE supports a channel bandwidth of 90 MHz, the network may ignore this capability for and validate instead the channelBW-90mhz and the supportedBandwidthCombinationSet. ex: channelBW-90mhz supported,</p>
-	<p> > (Rule4) => whether the UE supports a channel bandwidth of 100 MHz, ex: supportedBandwidthDL fr1 : mhz100</p>
-	<p> > ex: Compal UE mifi n78 SCS=30 support BW 20, 30, 40, 50, 60, 70, 80, 90, 100 </p>
-	<p><b> ● Paste the UeCapabilityInformation below (Note: it only process Rule1, the Rule 2,3,4 should check by yourself)</b></p>
-    <textarea id="inputText" rows="10" cols="70" placeholder="Paste your text here"></textarea><br>
-    <button onclick="parseText()">Parse Text</button>
-    <pre id="output"></pre>
+
+
+        <ul>
+            <li>
+				<b> Reference: spec 38.306 </b> 
+				<ul>
+					<li>
+						<span class="red-text">(Rule1)</span> For FR1, the bits in channelBWs-DL starting from the leftmost bit indicate <span class="limegreen-text">5, 10, 15, 20, 25, 30, 40, 50, 60 and 80MHz</span>. ex: channelBWs-DL fr1 :{scs-30kHz '00010111 11'B},
+					</li>					
+					<li>
+						<span class="blue-text">(Rule2)</span> For FR1, the leading/leftmost bit in channelBWs-DL-v1590 indicates <span class="limegreen-text">70MHz</span>, and all the remaining bits in channelBWs-DL-v1590 shall be set to 0. ex:{scs-30kHz '10000000 00000000'B}
+					</li>
+					<li>
+						<span class="blue-text">(Rule3)</span> To determine whether the UE supports a channel bandwidth of <span class="limegreen-text">90 MHz</span>, the network may ignore this capability for and validate instead the channelBW-90mhz and the supportedBandwidthCombinationSet. ex: channelBW-90mhz supported
+					</li>
+					<li>
+						<span class="blue-text">(Rule4)</span> whether the UE supports a channel bandwidth of <span class="limegreen-text">100 MHz</span>, ex: supportedBandwidthDL fr1 : mhz100
+					</li>
+				</ul><br>
+            </li>
+            <li>	
+				<b> Paste the Qcom UeCapabilityInformation below</b> (Note: it only process <span class="red-text">(Rule1)</span>, the <span class="blue-text">(Rule2)(Rule3)(Rule4)</span> should check by yourself)
+				<ul>
+					<li>
+						ex: Compal UE mifi n78 SCS=30 support BW 20, 30, 40, 50, 60, 70, 80, 90, 100
+					</li>
+				    <textarea id="inputText" rows="10" cols="70" placeholder="Paste your text here"></textarea><br>
+					<button onclick="parseText()">Parse Text</button>
+					<pre id="output"></pre>
+				</ul>
+            </li>			
+        </ul>
+
+
+<pre>
+==================================================================
+【Note】
+注意UE是否支援這個BW, 要檢查2部分
+(1) [0xB826] NR5G RRC Supported CA combos
+(2) UeCapabilityInformation 檢查支援的 NR bandwidth
+
+【Example】
+// (1)支援 SA 單 band n78
+1980/03/16 07:59:43.874	[0xB826]	NR5G RRC Supported CA Combos
+Version              = 7
+Total Num Combos From RF = 12
+Starting Index       = 0
+Num Combos           = 12
+Source               = RF
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|   |Envelope|     |    |      |                         |   |      |    |        |                         |               |        |                         |UL   |               |        |                                        |                                        |
+|   |Mode    |     |    |      |                         |   |      |    |        |                         |               |        |                         |QAM  |               |        |                                        |                                        |
+|   |Pruned  |Num  |Env |      |                         |   |      |    |DL BW   |                         |               |UL BW   |                         |Cap  |SRS TX Switch  |        |                                        |                                        |
+|#  |Out     |Bands|Mask|BC ID |Muting State             |#  |Band  |Tech|Class   |DL Max Antennas Index    |UL Type        |Class   |UL Max Antennas Index    |Index|Type           |Max SCS |DL BW Per CC                            |UL BW Per CC                            |
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|  0|   false|    1|0x01|     0|              EXACT_MATCH|  0|    79|  NR| CLASS_A|                ANTENNA_4|     CONTIGUOUS| CLASS_A|                ANTENNA_2|    2|    UNSUPPORTED|  SCS_30|                                  BW_100|                                  BW_100|
+|  1|   false|    1|0x01|     1|              EXACT_MATCH|  0|    78|  NR| CLASS_A|                ANTENNA_4|     CONTIGUOUS| CLASS_A|                ANTENNA_2|    2|    UNSUPPORTED|  SCS_30|                                  BW_100|                                  BW_100|
+|  2|   false|    1|0x01|     2|              EXACT_MATCH|  0|    77|  NR| CLASS_A|                ANTENNA_4|     CONTIGUOUS| CLASS_A|                ANTENNA_2|    2|    UNSUPPORTED|  SCS_30|                                  BW_100|                                  BW_100|
+|  3|   false|    1|0x01|     3|              EXACT_MATCH|  0|    71|  NR| CLASS_A|                ANTENNA_2|     CONTIGUOUS| CLASS_A|                ANTENNA_1|    2|    UNSUPPORTED|  SCS_15|                                   BW_20|                                   BW_20|
+|  4|   false|    1|0x01|     4|              EXACT_MATCH|  0|    66|  NR| CLASS_A|                ANTENNA_4|     CONTIGUOUS| CLASS_A|                ANTENNA_1|    2|    UNSUPPORTED|  SCS_15|                                   BW_40|                                   BW_40|
+|  5|   false|    1|0x01|     5|              EXACT_MATCH|  0|    41|  NR| CLASS_A|                ANTENNA_4|     CONTIGUOUS| CLASS_A|                ANTENNA_2|    2|    UNSUPPORTED|  SCS_30|                                  BW_100|                                  BW_100|
+|  6|   false|    1|0x01|     6|              EXACT_MATCH|  0|    28|  NR| CLASS_A|                ANTENNA_2|     CONTIGUOUS| CLASS_A|                ANTENNA_1|    2|    UNSUPPORTED|  SCS_15|                                   BW_30|                                   BW_30|
+|  7|   false|    1|0x01|     7|              EXACT_MATCH|  0|    25|  NR| CLASS_A|                ANTENNA_4|     CONTIGUOUS| CLASS_A|                ANTENNA_1|    2|    UNSUPPORTED|  SCS_15|                                   BW_20|                                   BW_20|
+|  8|   false|    1|0x01|     8|              EXACT_MATCH|  0|     7|  NR| CLASS_A|                ANTENNA_4|     CONTIGUOUS| CLASS_A|                ANTENNA_1|    2|    UNSUPPORTED|  SCS_15|                                   BW_20|                                   BW_20|
+|  9|   false|    1|0x01|     9|              EXACT_MATCH|  0|     3|  NR| CLASS_A|                ANTENNA_4|     CONTIGUOUS| CLASS_A|                ANTENNA_1|    2|    UNSUPPORTED|  SCS_15|                                   BW_30|                                   BW_30|
+| 10|   false|    1|0x01|    10|              EXACT_MATCH|  0|     2|  NR| CLASS_A|                ANTENNA_4|     CONTIGUOUS| CLASS_A|                ANTENNA_1|    2|    UNSUPPORTED|  SCS_15|                                   BW_20|                                   BW_20|
+| 11|   false|    1|0x01|    11|              EXACT_MATCH|  0|     1|  NR| CLASS_A|                ANTENNA_4|     CONTIGUOUS| CLASS_A|                ANTENNA_1|    2|    UNSUPPORTED|  SCS_15|                                   BW_40|                                   BW_40|
+
+// (2) UeCapabilityInformation 檢查支援的 NR bandwidth
+1980/03/16 07:59:43.872	[0xB821]	UL_DCCH / UeCapabilityInformation
+      {
+        bandNR 78,
+        pusch-256QAM supported,
+        ue-PowerClass pc3,
+
+<span class="blue-text">//For FR1, the bits in channelBWs-DL (without suffix) starting from the leading / leftmost bit indicate 5, 10, 15, 20, 25, 30, 40, 50, 60 and 80MHz. </span>
+        channelBWs-DL fr1 : 
+          {
+            scs-15kHz '00000000 00'B, <span class="red-text">//not support SCS=15</span>
+            scs-30kHz '00010111 11'B, <span class="red-text">//support BW 20, 30, 40, 50, 60, 80</span>
+            scs-60kHz '00000000 00'B
+          },
+        channelBWs-UL fr1 : 
+          {
+            scs-15kHz '00000000 00'B,
+            scs-30kHz '00010111 11'B,
+            scs-60kHz '00000000 00'B
+          },
+        maxUplinkDutyCycle-PC2-FR1 n100,
+<span class="blue-text">//For FR1, the leading/leftmost bit in channelBWs-DL-v1590 indicates 70MHz, and all the remaining bits in channelBWs-DL-v1590 shall be set to 0. </span>
+        channelBWs-DL-v1590 fr1 : 
+          {
+            scs-30kHz '10000000 00000000'B <span class="red-text">//support BW 70</span>
+          },
+        channelBWs-UL-v1590 fr1 : 
+          {
+            scs-30kHz '10000000 00000000'B
+          }
+      },
+/////////////////////////////////////
+<span class="blue-text">//To determine whether the UE supports a channel bandwidth of 90 MHz, the network may ignore this capability for and validate instead the channelBW-90mhz and the supportedBandwidthCombinationSet. </span>
+      {
+        bandList 
+        {
+          nr : 
+            {
+              bandNR 78,
+              ca-BandwidthClassDL-NR a,
+              ca-BandwidthClassUL-NR a
+            }
+        },
+        featureSetCombination 0,  //【1】查看底下featureSetCombination 第0組，只有featureset combination從0開始，其他從1
+        powerClass-v1530 pc2
+      }
+/////////////////////////////////////
+  featureSetCombinations   //【1】
+  {
+    {
+      {
+        nr : 
+          {
+            downlinkSetNR 2,  //【2 DL】查看featureSetsDownlink 由1開始數，第2組
+            uplinkSetNR 2  //【2 UL】查看featureSetsUplink 由1開始數，第2組
+          }
+      }
+    }
+  },
+/////////////////////////////////////
+  featureSets 
+  {
+    featureSetsDownlink 
+    {
+      {
+        featureSetListPerDownlinkCC 
+        {
+          1
+        },
+        ue-SpecificUL-DL-Assignment supported
+      },
+      {
+        featureSetListPerDownlinkCC 
+        {
+          2  //【3 DL】查看featureSetsDownlinkPerCC 由1開始數，第2組
+        },
+        ue-SpecificUL-DL-Assignment supported
+      },
+/////////////////////////////////////
+    featureSetsDownlinkPerCC 
+    {
+      {
+        supportedSubcarrierSpacingDL kHz30,
+        supportedBandwidthDL fr1 : mhz100,
+        maxNumberMIMO-LayersPDSCH fourLayers,
+        supportedModulationOrderDL qam256
+      },
+      {
+        supportedSubcarrierSpacingDL kHz30,
+        supportedBandwidthDL fr1 : mhz100,  <span class="red-text">//【4 DL】support BW 100 </span>
+        channelBW-90mhz supported,  <span class="red-text">//【4 DL】support BW 90 </span>
+        maxNumberMIMO-LayersPDSCH fourLayers,
+        supportedModulationOrderDL qam256
+      },
+/////////////////////////////////////
+    featureSetsUplink 
+    {
+      {
+        featureSetListPerUplinkCC 
+        {
+          1
+        },
+        supportedSRS-Resources 
+        {
+          maxNumberAperiodicSRS-PerBWP n16,
+          maxNumberAperiodicSRS-PerBWP-PerSlot 6,
+          maxNumberPeriodicSRS-PerBWP n16,
+          maxNumberPeriodicSRS-PerBWP-PerSlot 6,
+          maxNumberSemiPersistentSRS-PerBWP n2,
+          maxNumberSemiPersistentSRS-PerBWP-PerSlot 2,
+          maxNumberSRS-Ports-PerResource n2
+        }
+      },
+      {
+        featureSetListPerUplinkCC 
+        {
+          2  //【3 UL】查看featureSetsUplinkPerCC 由1開始數，第2組
+        },
+        supportedSRS-Resources 
+        {
+          maxNumberAperiodicSRS-PerBWP n16,
+          maxNumberAperiodicSRS-PerBWP-PerSlot 6,
+          maxNumberPeriodicSRS-PerBWP n16,
+          maxNumberPeriodicSRS-PerBWP-PerSlot 6,
+          maxNumberSemiPersistentSRS-PerBWP n2,
+          maxNumberSemiPersistentSRS-PerBWP-PerSlot 2,
+          maxNumberSRS-Ports-PerResource n2
+        }
+      },
+/////////////////////////////////////
+    featureSetsUplinkPerCC 
+    {
+      {
+        supportedSubcarrierSpacingUL kHz30,
+        supportedBandwidthUL fr1 : mhz100,
+        mimo-CB-PUSCH 
+        {
+          maxNumberMIMO-LayersCB-PUSCH twoLayers,
+          maxNumberSRS-ResourcePerSet 1
+        },
+        supportedModulationOrderUL qam256
+      },
+      {
+        supportedSubcarrierSpacingUL kHz30,
+        supportedBandwidthUL fr1 : mhz100,  <span class="red-text">//【4 UL】support BW 100 </span>
+        channelBW-90mhz supported,  <span class="red-text">//【4 UL】support BW 90 </span>
+        mimo-CB-PUSCH 
+        {
+          maxNumberMIMO-LayersCB-PUSCH twoLayers,
+          maxNumberSRS-ResourcePerSet 1
+        },
+        supportedModulationOrderUL qam256
+      }, 
+
+</pre>	
+	
 </body>
 </html>
